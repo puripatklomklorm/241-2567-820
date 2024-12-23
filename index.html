@@ -4,13 +4,51 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <style>
+        @font-face{
+            font-family:'kanit';
+            src:url('./Kanit/Kanit-Regular.ttf'); 
+        }
+        body{
+            font-family:'kanit';
+        }
+        #register {
+            font-size: 24px;
+            color:blue;
+            font-weight: 800;
+            padding: 10px;
+            margin:10px;
+            background-color:yellow;
+            border: 1px solid black;
+        }
+        .header-form{
+            font-weight:800;
+        }
+        .gender{
+            display:flex;
+            flex-direction: row-reverse;
+        }
+       .container{
+        font-size:18px;
+       }
+       #register{
+       font: site 2px;
+       }
+    </style>
 </head>
 <body>
-    <h1>Register form</h1>
-    ชื่อ<input type ="text"><br>
-    นามสกุล<input type ="text">
-    อายุ<input type ="number" min="0" max="150">
-    <div>
+    <div class="box"></div>
+    <div class="cotainer">
+         <div id = "register">
+             Register form
+            </div>
+    <div id ="register">Register form</div>
+    <spam class ="header-from">ชื่อ</spam>
+    <input class="from"type="text">
+    <spam class ="header-from">นามสกุล</spam>
+    <input class = "from" type ="text"><br>
+    อายุ<input class = "from" type ="number" min="0" max="150">
+    <div class="gender">
         เพศ
         <div>
         <input name ="gender" type="radio">ชาย
