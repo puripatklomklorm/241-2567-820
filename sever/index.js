@@ -1,105 +1,129 @@
-/*const http = require('http'); // Import Node.js core module
-
-const host = 'localhost'; // Localhost
-
-const port = 8000; // Port number
-
-// เมื่อเปิด เว็บไปที่ http://localhost:8000/ จะเรียกใช้งาน function requireListener
-const requireListener = function (req, res) {
-    res.writeHead(200);
-    res.end('My first server!');
-}
-
-const server = http.createServer(requireListener);
-server.listen(port, host, () => {
-    console.log(`Server is running on http://${host}:${port}`); // ` ` แบล้คติ้ก เอาสตรีงกับตัวแปรมาใส่ได้เลย
-});
-*/
 const express = require('express');
-const app = express();
 const bodyParser = require('body-parser');
-
+const app = express();
+const mysql = require('mysql2/promise');
+app.use(bodyParser.json());
 const port = 8000;
 
-app.use(bodyParser.json());
-
-let users = [];
-let counter = 1;
+let users = []
+let conn = null
 
 /*
-GET /users แสดงข้อมูล get users ทั้งหมด
-POST /users สร้างข้อมูล user ใหม่ที่ต้องการเพิ่มเข้าไป
-GET /users/:id แสดงข้อมูล user ที่ต้องการดู รายคน
-PUT /users/:id แก้ไขข้อมูล user ที่ต้องการแก้ไข รายคน
-DELETE /users/:id ลบข้อมูล user ที่ต้องการลบ รายคน
-*/ 
+GET /users สำหรับ get ข้อมูล user ทั้งหมด
+POST /user สำหรับสร้าง create user ใหม่บันทึกเข้าไป
+PUT /user/:id สำหรับ update ข้อมูล user รายคนที่ต้องการบันทึกเข้าไป
+DELETE /user/:id สำหรับลบ user รายคนที่ต้องการออกไป
+GET /user/:id สำหรับ get ข้อมูล user รายคนที่ต้องการ
+*/
+// path = GET /users
 
-//ใช้แสดงuser ทั้งหมด
-app.get('/users', (req, res) => {
-    res.json(users);
+
+app.get('/testdb', (req, res) => {
+    mysql.createConnection({
+        host: 'localhost',
+        user: 'root',
+        password:'root',
+        database: 'webdb',
+        port: 8830
+    }).then((conn) => {
+        conn
+        .query('SELECT * FROM users')
+        .then((results) => {
+            res.json(results[0])
+        })
+        .catch((error) => {
+            console.log('Error fetching users:', error.message)
+            res.status(500).json({error: 'Error fetching users'})
+        })
+    })
+ })
+ 
+const initMySQL = async () => {
+  conn = await mysql.createConnection({
+      host: 'localhost',
+      user: 'root',
+      password:'root',
+      database: 'webdb',
+      port: 8830
+  })
+}
+
+ app.get('/testdb-new', async (req, res) => {
+  try {
+        const results = await conn.query('SELECT * FROM users')
+        res.json(results[0])
+      } catch (error) {
+        console.log('Error fetching users:', error.message)
+        res.status(500).json({error: 'Error fetching users'})
+  }
+ })
+
+
+//path = / Get / Users
+app.get('/users', async (req,res) => {
+  const results = await conn.query('SELECT * FROM users')
+  res.json(results[0])
 })
 
-
-app.get('/test', (req, res) => {  /* ('/ ชื่อpath ') */ 
-    let user = {
-        name: 'John',
-        lastname:"Wic",
-        age: 25
-    };
-    res.json(user);
-})
-
-//สร้าง path แสดง /user ใช้แสดงข้อมูล USER ใหม่
-app.post('/user', (req, res) => {
+// path = POST / User
+app.post('/users', async (req,res) => {
     let user = req.body;
-    user.id = counter;
-    counter += 1;
-    users.push(user);
+    const results = await conn.query('INSERT INTO users SET ?', user)
+    console.log('results', results)
     res.json({
         message: 'User created',
-        user: user
+        data: results[0]
     });
 })
 
-//path = put ใช้แก้ไขข้อมูล user โดยใช้ id เป็นตัวกำหนด
-app.put('/user/:id', (req, res) => {
+// path = PUT / user/:id
+app.put('/user/:id', (req,res) => {
     let id = req.params.id;
     let updateUser = req.body;
-    // หา user จาก id ที่รับมา
-    let selectedIndex = users.findIndex(user => user.id == id);
-    
-    // แก้ไขข้อมูล user ที่หาเจอ
-    if (updateUser.firstname) {
-        users[selectedIndex].firstname = updateUser.firstname;
+    // find users from id request
+    let selectedIndex = users.findIndex(user => user.id == id)
+    // update user 
+    if (updateUser.firstname){
+        users[selectedIndex].firstname = updateUser.firstname
     }
-    if (updateUser.lastname) {
-        users[selectedIndex].lastname = updateUser.lastname;
+    if (updateUser.lastname){
+        users[selectedIndex].lastname = updateUser.lastname
     }
+
+    users[selectedIndex].firstname = updateUser.firstname || users[selectedIndex].firstname
+    users[selectedIndex].lastname = updateUser.lastname || users[selectedIndex].lastname
 
     res.json({
-        message: 'User updated ',
+        message: 'User updated successfully',
         data: {
             user: updateUser,
-            indexUpdated: selectedIndex
+            indexUpdate: selectedIndex
         }
-    })
+    });
+    // sent user info in update to where it belongs
+    /* 
+    GET / USERS = get all users
+    POST / USERS = create new user in data
+    GET /users/:id = get user by id
+    PUT /users/:id = get user by id
+    */
+ })
 
-    // delete ใช้ลบข้อมูล user โดยใช้ id เป็นตัวกำหนด
-    app.delete('/user/:id', (req, res) => {
-        let id = req.params.id;
-        // หา index ที่ต้องการลบ
-        let selectedIndex = users.findIndex(user => user.id == id);
-        // ลบข้อมูลที่ต้องการ
-        users.esplic(selectedIndex, 1); // ลบข้อมูลที่ต้องการ
-        res.json({
-            message: 'Deleted Completed',
-            indexDeleted: selectedIndex
-         })
-    })
+// Path = DELETE / user/:id
+app.delete('/user/:id', (req,res) => {
+    let id = req.params.id;
+    // find index of user
+    let selectedIndex = users.findIndex(user => user.id == id)
+    
+    users.splice(selectedIndex,1)
+    delete users[selectedIndex]
+    res.json({
+        message: 'Delete Completed',
+        indexDelete: selectedIndex
+    });
 });
 
-
-
-app.listen(port, (req, res) => {
-     console.log(' Server is running on port', + port);
- });
+app.listen(port, async (req,res) => {
+  await initMySQL()
+    console.log(`Server is running on port`+ port);
+});
