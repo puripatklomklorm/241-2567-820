@@ -1,81 +1,66 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <style>
-        @font-face{
-            font-family:'kanit';
-            src:url('./Kanit/Kanit-Regular.ttf'); 
-        }
-        body{
-            font-family:'kanit';
-        }
-        #register {
-            font-size: 24px;
-            color:blue;
-            font-weight: 800;
-            padding: 10px;
-            margin:10px;
-            background-color:yellow;
-            border: 1px solid black;
-        }
-        .header-form{
-            font-weight:800;
-        }
-        .gender{
-            display:flex;
-            flex-direction: row-reverse;
-        }
-       .container{
-        font-size:18px;
-       }
-       #register{
-       font: site 2px;
-       }
-    </style>
+    <link rel="stylesheet" href="style.css">
+
 </head>
 <body>
-    <div class="box"></div>
-    <div class="cotainer">
-         <div id = "register">
-             Register form
+    <div class="container">
+        <div class="header">
+            Register form
+        </div>
+        <div class="flex form-input">
+            <div class="header-form">ชื่อ</div>
+            <input class="form" name="firstname" type="text">
+        </div>
+        <div class="flex form-input">
+            <div class="header-form">นามสกุล</div>
+            <input class="form" name="lastname" type="text">
+        </div>
+        <div class="flex form-input">
+            <div class="header-form">อายุ</div> 
+            <input class="form" name="age" min="0" max="100">
+        </div>
+        <div class="flex gender form-input">
+            <div class="header-form">เพศ</div> 
+            <div class="flex">
+                <div>
+                    <input name="gender" type="radio" value="ชาย"> ชาย
+                </div>
+                <div>
+                    <input name="gender" type="radio" value="หญิง"> หญิง
+                </div>
+                <div>
+                    <input name="gender" type="radio" value="อื่นๆ"> อื่นๆ
+                </div>
             </div>
-    <div id ="register">Register form</div>
-    <spam class ="header-from">ชื่อ</spam>
-    <input class="from"type="text">
-    <spam class ="header-from">นามสกุล</spam>
-    <input class = "from" type ="text"><br>
-    อายุ<input class = "from" type ="number" min="0" max="150">
-    <div class="gender">
-        เพศ
-        <div>
-        <input name ="gender" type="radio">ชาย
         </div>
-        <div>
-            <input name ="gender" type="radio">หญิง
+        <div class="form-input">
+            งานอดิเรก
+            <div>
+                <input name="interest" type="checkbox" value="อ่านหนังสือ"> อ่านหนังสือ
+            </div>
+            <div>
+                <input name="interest" type="checkbox" value="ดูหนัง"> ดูหนัง
+            </div>
+            <div>
+                <input name="interest" type="checkbox" value="ฟังเพลง"> ฟังเพลง
+            </div>
         </div>
-        <div>
-            <input name ="gender" type="radio">อื่นๆ
+        <div class="form-input">
+            คำอธิบาย
+            <textarea name="description"></textarea>
         </div>
-    </div>
-    <div>
-        สิ่งที่สนใจ
-        <div>
-            <input name ="interest" type="checkbox">เรียน
-        </div>
-        <div>
-            <input name ="interest" type="checkbox">เล่นเกม
-        </div>
-        <div>
-            <input name ="interest" type="checkbox">อ่านหนังสือ
+        <div id="message" class="message "></div>
+        <div class="center">
+            <button  onclick="submitData()" class="button">ส่งข้อมูล</button>
         </div>
     </div>
-    <div>
-        คำอธิบายตัวเอง
-        <textarea></textarea>
-    </div>
-    <button>ส่งข้อมูล</button>
+    <script src="https://cdn.jsdelivr.net/npm/axios@1.6.7/dist/axios.min.js"></script>
+    <script src="index.js"></script>
 </body>
 </html>
