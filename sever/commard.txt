@@ -1,3 +1,0 @@
-docker -v
-docker ps
-docker ps --all
